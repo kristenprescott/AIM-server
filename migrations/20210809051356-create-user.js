@@ -16,6 +16,10 @@ module.exports = {
       buddyInfo: {
         type: Sequelize.STRING,
       },
+      bot: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

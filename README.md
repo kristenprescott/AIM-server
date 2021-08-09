@@ -189,7 +189,33 @@ mysql> SELECT * FROM users;
 +----+------------+------------+---------------------+---------------------+
 2 rows in set (0.00 sec)
 
-mysql>
+mysql> exit
+Bye
+aello@server::
+------------------------------------------------------------
+
 ```
 
 it worked. sweet.
+
+Now we can change our `resolvers.js` `getUsers` function since we're fetching users from the DB:
+
+```js
+// Now fetching Users from database, so we import User model
+const { User } = require("../models");
+
+module.exports = resolvers = {
+  Query: {
+    getUsers: async () => {
+      // Now that we're fetching Users from DB using async/await, we need a try/catch
+      try {
+        const users = await User.findAll();
+
+        return users;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  },
+};
+```

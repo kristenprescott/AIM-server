@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
       },
       buddyInfo: DataTypes.STRING,
+      bot: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
     {
       // Options:
