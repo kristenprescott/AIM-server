@@ -8,18 +8,19 @@ module.exports = gql`
   type User {
     id: ID!
     screenname: String!
+    role: String
+    buddyInfo: String
+    buddies: [User]
     email: String
     phoneNumber: String
     imagePath: String
-    buddyInfo: String
-    createdAt: String!
-    role: String
-    buddies: [User]!
+    token: String
+    updatedAt: String
   }
-  type Role {
-    id: ID!
-    name: String!
-  }
+  # type Role {
+  #   id: ID!
+  #   name: String!
+  # }
   type Buddy {
     screenname: String!
   }
@@ -29,9 +30,20 @@ module.exports = gql`
   type Query {
     # ! = this array must exist, even if empty
     getUsers: [User]!
-    getUser: User!
+    getUser(screenname: String!, id: String): User
+    signOn(screenname: String!, password: String!): User!
   }
   type Mutation {
     signUp(screenname: String!, password: String!, role: String!): User!
+    updateUserInfo(
+      id: String!
+      screenname: String
+      buddyInfo: String
+      email: String
+      phoneNumber: String
+      imagePath: String
+    ): User!
+    updateUser(id: String!, screenname: String!, buddyInfo: String): User
+    deleteUser(id: String!): User
   }
 `;

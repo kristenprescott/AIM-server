@@ -5,6 +5,7 @@ const { sequelize } = require("./models");
 
 const resolvers = require("./graphql/resolvers");
 const typeDefs = require("./graphql/typeDefs");
+const contextMiddleware = require("./utils/contextMiddleware");
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
@@ -12,6 +13,7 @@ const typeDefs = require("./graphql/typeDefs");
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: (ctx) => ctx,
 });
 
 // The `listen` method launches a web server.

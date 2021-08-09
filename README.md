@@ -37,6 +37,26 @@ RES:
   }
 }
 ____________________________________________________________
+Query: signOn:
+REQ:
+query($signOnScreenname: String!, $signOnPassword: String!) {
+  signOn(screenname: $signOnScreenname, password: $signOnPassword) {
+    screenname role
+  }
+}
+VARS:
+  "signOnScreenname": "kewpie",
+  "signOnPassword": "lamppost",
+RES:
+{
+  "data": {
+    "signOn": {
+      "screenname": "kewpie",
+      "role": "user"
+    }
+  }
+}
+____________________________________________________________
 Mutation: signUp:
 REQ:
 mutation($signUpScreenname: String!, $signUpPassword: String!, $signUpRole: String!) {
@@ -274,4 +294,56 @@ Using environment "development".
 
 aello@server::
 ----
+```
+
+```js
+  login: async (_, args) => {
+      const { username, password } = args;
+      let errors = {};
+
+      // Validation:
+      try {
+        // Check for empty name/password fields
+        if (username.trim() === "")
+          errors.username = "username must not be empty";
+        if (password === "") errors.password = "password must not be empty";
+
+        // Check for errors
+        if (Object.keys(errors).length > 0) {
+          throw new UserInputError("bad input", { errors });
+        }
+
+        const user = await User.findOne({
+          where: { username },
+        });
+
+        // Check if username exists
+        if (!user) {
+          errors.username = "user not found";
+          throw new UserInputError("user not found", { errors });
+        }
+
+        // Check if password is correct
+        const correctPassword = await bcrypt.compare(password, user.password);
+
+        if (!correctPassword) {
+          errors.password = "password is incorrect";
+          throw new AuthenticationError("password is incorrect", { errors });
+        }
+
+        // Check if token is expired
+        const token = jwt.sign({ username }, JWT_SECRET, {
+          expiresIn: "1h",
+        });
+
+        return {
+          ...user.toJSON(),
+          createdAt: user.createdAt.toISOString(),
+          token,
+        };
+      } catch (err) {
+        console.log(err);
+        throw err;
+      }
+    },
 ```

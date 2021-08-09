@@ -12,27 +12,13 @@ const { JWT_SECRET } = require("../config/env.json");
 // schema. This resolver retrieves users from the "users" array above.
 module.exports = resolvers = {
   Query: {
-    getUsers: async (_, ___, context) => {
+    getUsers: async (parent, args) => {
+      // Now that we're fetching Users from DB using async/await, we need a try/catch
       try {
-        let user;
-        if (context.req && context.req.headers.authorization) {
-          const token = context.req.headers.authorization.split("Bearer ")[1];
-          jwt.verify(token, JWT_SECRET, (err, decodedToken) => {
-            if (err) {
-              throw new AuthenticationError("Unauthenticated");
-            }
-            user = decodedToken;
-          });
-        }
-
-        const users = await User.findAll({
-          where: { screenname: { [Op.ne]: user.screenname } },
-        });
-
+        const users = await User.findAll();
         return users;
       } catch (err) {
         console.log(err);
-        throw err;
       }
     },
     getUser: async (_, args) => {
@@ -158,44 +144,34 @@ module.exports = resolvers = {
         throw new UserInputError("BAD USER INPUT", { errors });
       }
     },
-    updateUserInfo: async (
-      _,
-      { id, screenname, buddyInfo, email, phoneNumber, imagePath, updatedAt }
-    ) => {
-      // let updatedUser;
-      try {
-        const updatedUser = await User.findOne({ where: { id } });
-        //
-        updatedUser = {
-          id: user.id,
-          // first check if values are provided
-          screenname: screenname !== undefined ? screenname : user.screenname,
-          buddyInfo: buddyInfo !== undefined ? buddyInfo : user.buddyInfo,
-          email: email !== undefined ? email : user.email,
-          phoneNumber:
-            phoneNumber !== undefined ? phoneNumber : user.phoneNumber,
-          imagePath: imagePath !== undefined ? imagePath : user.imagePath,
-        };
-        return {
-          ...updatedUser.toJSON(),
-          updatedAt: updatedUser.updatedAt.toISOString(),
-        };
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    // updateUser: async (_, args) => {
-    //   const { screenname, buddyInfo } = args;
+    // updateUserInfo: async (
+    //   _,
+    //   {
+    //     screenname,
+    //     password,
+    //     email,
+    //     buddyInfo,
+    //     phoneNumber,
+    //     imagePath,
+    //     buddies,
+    //   }
+    // ) => {
     //   try {
-    //     const user = await User.update(
-    //       { screenname, buddyInfo },
-    //       { where: { id } }
-    //     );
-    //     // return { id: args.id, screenname: args.screenname,buddyInfo: args.buddyInfo}
-    //     return {
-    //       ...user.toJSON(),
-    //       updatedAt: user.updatedAt.toISOString(),
-    //     };
+    //     (await user) &&
+    //       user.update(
+    //         {
+    //           screenname,
+    //           password,
+    //           email,
+    //           buddyInfo,
+    //           phoneNumber,
+    //           imagePath,
+    //           buddies,
+    //         },
+    //         { where: { id } }
+    //       );
+    //     console.log("User info updated.");
+    //     return { ...user, id, updatedAt };
     //   } catch (err) {
     //     console.log(err);
     //   }

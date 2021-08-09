@@ -9,15 +9,15 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
-      User.associate = function () {
-        User.belongsTo(Role, {
-          foreignKey: {
-            name: "roleId",
-            type: DataTypes.STRING,
-          },
-        });
-      };
+      // // define association here
+      // User.associate = function () {
+      //   User.belongsTo(Role, {
+      //     foreignKey: {
+      //       name: "roleId",
+      //       type: DataTypes.STRING,
+      //     },
+      //   });
+      // };
       User.belongsToMany(User, {
         as: "buddies",
         through: "buddyList",
@@ -69,7 +69,6 @@ module.exports = (sequelize, DataTypes) => {
       imagePath: DataTypes.STRING,
       role: {
         type: DataTypes.STRING,
-        defaultValue: "user",
       },
     },
     {
