@@ -1,0 +1,36 @@
+{
+  "name": "aim-server",
+  "version": "1.0.0",
+  "description": "AOL Instant Messenger clone backend",
+  "main": "index.js",
+  "repository": {
+    "url": "",
+    "type": "git"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "graphql",
+    "sequelize",
+    "sequelizer",
+    "mysql"
+  ],
+  "homepage": "",
+  "author": "Kristen Prescott",
+  "funding": {
+    "type": "patreon",
+    "url": "https://www.patreon.com/my-account"
+  },
+  "license": "MIT",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.2.0"
+  },
+  "dependencies": {
+    "apollo-server": "^3.1.2",
+    "graphql": "^15.5.1"
+  }
+}
