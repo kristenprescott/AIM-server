@@ -9,17 +9,19 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       screenname: {
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(42),
         allowNull: false,
         unique: true,
       },
-      buddyInfo: {
+      password: {
         type: Sequelize.STRING,
+        allowNull: false,
       },
-      bot: {
-        type: Sequelize.BOOLEAN,
-        defaultValue: false,
-      },
+      email: Sequelize.STRING(100),
+      phoneNumber: Sequelize.STRING(15),
+      buddyInfo: Sequelize.STRING,
+      imagePath: Sequelize.STRING,
+      role: Sequelize.STRING,
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

@@ -4,7 +4,7 @@
 
 ---
 
-Example Queries & Responses:
+## Example Queries & Responses:
 
 ```
 Query: getUsers:
@@ -37,6 +37,28 @@ RES:
   }
 }
 ____________________________________________________________
+Mutation: signUp:
+REQ:
+mutation($signUpScreenname: String!, $signUpPassword: String!, $signUpRole: String!) {
+  signUp(screenname: $signUpScreenname, password: $signUpPassword, role: $signUpRole) {
+    screenname role
+  }
+}
+VARS:
+{
+  "signUpScreenname": "dogsweat",
+  "signUpPassword": "lamppost",
+  "signUpRole": "user"
+}
+RES:
+{
+  "data": {
+    "signUp": {
+      "screenname": "dogsweat",
+      "role": "user"
+    }
+  }
+}
 ```
 
 ---
@@ -45,10 +67,11 @@ ____________________________________________________________
 
 `sequelize init` creates some boilerplate files for us:
 
-`config.json` - database connection settings(dev, test, prod)
+`config.json` - tells sequelize how to connect to our database & database connection settings(dev, test, prod)
+`models` - contains all models, also contains an `index.js` file which integrates our all our models together and
 `models/index.js` - gets config.json and starts a new Sequelize instance and exports the package and DB instance
-`migrations/` -
-`seeders/` -
+`migrations/` - contains all migration files
+`seeders/` - contains all seed files
 
 ```shell
 aello@server::
@@ -218,4 +241,37 @@ module.exports = resolvers = {
     },
   },
 };
+```
+
+---
+
+We added some more fields to the users table, so we need to change our migration:
+
+```shell
+aello@server::
+------------------------------------------------------------
+sequelize db:migrate:undo
+# Undo last migration (this will delete our users data)
+
+Sequelize CLI [Node: 16.5.0, CLI: 6.2.0, ORM: 6.6.5]
+
+Loaded configuration file "config/config.json".
+Using environment "development".
+== 20210809051356-create-user: reverting =======
+== 20210809051356-create-user: reverted (0.014s)
+
+aello@server::
+------------------------------------------------------------
+sequelize db:migrate
+# Make our new migration
+
+Sequelize CLI [Node: 16.5.0, CLI: 6.2.0, ORM: 6.6.5]
+
+Loaded configuration file "config/config.json".
+Using environment "development".
+== 20210809051356-create-user: migrating =======
+== 20210809051356-create-user: migrated (0.016s)
+
+aello@server::
+----
 ```

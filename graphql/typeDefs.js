@@ -6,13 +6,22 @@ const { gql } = require("apollo-server");
 module.exports = gql`
   # This "User" type defines the queryable fields for every user in our data source.
   type User {
+    id: ID!
     screenname: String!
+    email: String
+    phoneNumber: String
+    imagePath: String
     buddyInfo: String
-    awayMessage: String
-    bot: Boolean
-    # token: String
-    # createdAt: String!
-    # latestMessage: Message
+    createdAt: String!
+    role: String
+    buddies: [User]!
+  }
+  type Role {
+    id: ID!
+    name: String!
+  }
+  type Buddy {
+    screenname: String!
   }
   # Query: lists all of the available queries that
   # clients can execute, along with the return type for each. In this
@@ -20,5 +29,9 @@ module.exports = gql`
   type Query {
     # ! = this array must exist, even if empty
     getUsers: [User]!
+    getUser: User!
+  }
+  type Mutation {
+    signUp(screenname: String!, password: String!, role: String!): User!
   }
 `;
