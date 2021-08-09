@@ -14,7 +14,7 @@ module.exports = gql`
     # createdAt: String!
     # latestMessage: Message
   }
-  # The "Query" type is special: it lists all of the available queries that
+  # Query: lists all of the available queries that
   # clients can execute, along with the return type for each. In this
   # case, the "getUsers" query returns an array of zero or more Users (defined above).
   type Query {

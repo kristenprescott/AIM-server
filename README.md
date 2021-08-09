@@ -38,3 +38,14 @@ RES:
 }
 ____________________________________________________________
 ```
+
+---
+
+## Sequleize
+
+`sequelize init` creates some boilerplate files for us:
+
+`config.json` - database connection settings(dev, test, prod)
+`models/index.js` - gets config.json and starts a new Sequelize instance and exports the package and DB instance
+`migrations/` -
+`seeders/` -
