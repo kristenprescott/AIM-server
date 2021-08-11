@@ -1,6 +1,5 @@
 "use strict";
 const { Model } = require("sequelize");
-const { Role } = require("../models");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -9,15 +8,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // // define association here
-      // User.associate = function () {
-      //   User.belongsTo(Role, {
-      //     foreignKey: {
-      //       name: "roleId",
-      //       type: DataTypes.STRING,
-      //     },
-      //   });
-      // };
+      // define association here
       User.belongsToMany(User, {
         as: "buddies",
         through: "buddyList",
@@ -68,6 +59,9 @@ module.exports = (sequelize, DataTypes) => {
       buddyInfo: DataTypes.STRING,
       imagePath: DataTypes.STRING,
       role: {
+        type: DataTypes.STRING,
+      },
+      awayMessage: {
         type: DataTypes.STRING,
       },
     },

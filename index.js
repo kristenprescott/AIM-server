@@ -13,7 +13,7 @@ const contextMiddleware = require("./utils/contextMiddleware");
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: (ctx) => ctx,
+  context: contextMiddleware,
 });
 
 // The `listen` method launches a web server.

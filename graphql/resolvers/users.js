@@ -4,23 +4,85 @@ const jwt = require("jsonwebtoken");
 const { Op } = require("sequelize");
 
 // Now fetching Users from database, so we import User model
-const { User } = require("../models");
-const { JWT_SECRET } = require("../config/env.json");
+const { Message, User } = require("../../models");
+const { JWT_SECRET } = require("../../config/env.json");
 
 // A map of functions which return data for the schema -
 // Resolvers define the technique for fetching the types defined in the
 // schema. This resolver retrieves users from the "users" array above.
 module.exports = resolvers = {
   Query: {
-    getUsers: async (parent, args) => {
-      // Now that we're fetching Users from DB using async/await, we need a try/catch
+    getUsers: async (_, __, { user }) => {
       try {
-        const users = await User.findAll();
+        if (!user) throw new AuthenticationError("Unauthenticated");
+
+        let users = await User.findAll({
+          // tell sequelize to select certain attributes
+          attributes: [
+            "id",
+            "screenname",
+            "role",
+            "buddyInfo",
+            "awayMessage",
+            "imagePath",
+            "createdAt",
+          ],
+          where: { screenname: { [Op.ne]: user.screenname } },
+        });
+
+        const allUserMessages = await Message.findAll({
+          where: {
+            [Op.or]: [{ from: user.screenname }, { to: user.screenname }],
+          },
+          order: [["createdAt", "DESC"]],
+        });
+
+        // Show latest messages in descending order - map over messages that belong to either sender or reciepient and return those
+        users = users.map((otherUser) => {
+          const latestMessage = allUserMessages.find(
+            (m) =>
+              m.from === otherUser.screenname || m.to === otherUser.screenname
+          );
+          otherUser.latestMessage = latestMessage;
+          return otherUser;
+        });
+
         return users;
       } catch (err) {
         console.log(err);
+        throw err;
       }
     },
+    // getUsers: async (parent, __, { user }) => {
+    //   try {
+    //     if (!user) throw new AuthenticationError("Unauthenticated");
+
+    //     let users = await User.findAll({
+    //       attributes: ["screenname", "imagePath", "createdAt"],
+    //       where: { screenname: { [Op.ne]: user.screenname } },
+    //     });
+
+    //     const allUserMessages = await Message.findAll({
+    //       where: {
+    //         [Op.or]: [{ from: user.screenname }, { to: user.screenname }],
+    //       },
+    //       order: [["createdAt", "DESC"]],
+    //     });
+
+    //     users = users.map((otherUser) => {
+    //       const latestMessage = allUserMessages.find(
+    //         (m) => m.from === otherUser.screenname || m.to === otherUser.screenname
+    //       );
+    //       otherUser.latestMessage = latestMessage;
+    //       return otherUser;
+    //     });
+
+    //     return users;
+    //   } catch (err) {
+    //     console.log(err);
+    //     throw err;
+    //   }
+    // },
     getUser: async (_, args) => {
       const { screenname } = args;
       let errors = {};
@@ -176,10 +238,10 @@ module.exports = resolvers = {
     //     console.log(err);
     //   }
     // },
-    deleteUser: async (_, { id }) => {
-      const user = await User.destroy({ where: { id } });
-      console.log("User destroyed.");
-      return `User ${user.screenname} destroyed.`;
-    },
+    // deleteUser: async (_, { id }) => {
+    //   const user = await User.destroy({ where: { id } });
+    //   console.log("User destroyed.");
+    //   return `User ${user.screenname} destroyed.`;
+    // },
   },
 };
